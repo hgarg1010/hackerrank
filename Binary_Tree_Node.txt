@@ -1,0 +1,27 @@
+/**
+Question:
+
+You are given a table, BST, containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N.
+*/
+
+/*
+sample output;
+
+1 Leaf
+2 Inner
+3 Leaf
+5 Root
+6 Leaf
+8 Inner
+9 Leaf
+
+
+*/
+select n , 
+       (case when p is null then 'Root' 
+        when (select distinct 1 from bst as inner_bst where inner_bst.p = outer_bst.n) = 1 then 'Inner'
+        else 'Leaf'end ) val
+       from bst as outer_bst
+       order by n;
+
+
