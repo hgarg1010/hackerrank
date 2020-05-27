@@ -1,0 +1,35 @@
+// Pivoted Table
+
+/*
+Question :
+
+Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. The output column headers should be Doctor, Professor, Singer, and Actor, respectively.
+Note: Print NULL when there are no more names corresponding to an occupation.
+
+*/
+
+
+/**
+Sample Output
+
+
+Jenny    Ashley     Meera  Jane
+Samantha Christeen  Priya  Julia
+NULL     Ketty      NULL   Maria
+
+*/
+
+//Query
+
+select [Doctor],[Professor],[Singer],[Actor]
+       from      
+        (select row_number() over(partition by occupation order by name) as col_seq,
+                 name,
+                 occupation               
+                 from occupations ) src_table
+PIVOT
+(
+max(name)
+    for occupation 
+    in ([Doctor],[Professor],[Singer],[Actor])
+) as PIVOTED_TABLE
