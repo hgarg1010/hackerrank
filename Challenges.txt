@@ -1,0 +1,32 @@
+/**
+Question:
+
+Julia asked her students to create some coding challenges. Write a query to print the hacker_id, name, and the total number of challenges created by each student. Sort your results by the total number of challenges in descending order. If more than one student created the same number of challenges, then sort the result by hacker_id. If more than one student created the same number of challenges and the count is less than the maximum number of challenges created, then exclude those students from the result.
+
+*/
+
+
+
+select hacker_id , name , cnt from 
+        (select  hackers.hacker_id , hackers.name , count(1) as cnt,
+                    dense_rank() over(order by count(1) desc) as a      
+                    from 
+                    hackers join challenges 
+                    on hackers.hacker_id = challenges.hacker_id
+                    group by hackers.hacker_id , hackers.name) as src_table 
+
+where 1 = ( 
+                    select (case when r_one.a = 1 then 1
+                                else count(1) end)
+                                        from 
+                                        (select  hackers.hacker_id , hackers.name , count(1) as cnt,
+                            dense_rank() over(order by count(1) desc) as a      
+                            from 
+                            hackers join challenges 
+                            on hackers.hacker_id = challenges.hacker_id
+                            group by hackers.hacker_id , hackers.name) as r_one 
+                        where 
+                        r_one.a = src_table.a
+                        group by r_one.a
+                )
+                order by cnt desc , hacker_id
