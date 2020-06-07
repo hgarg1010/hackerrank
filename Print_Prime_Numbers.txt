@@ -1,0 +1,22 @@
+/**
+Question:
+
+Write a query to print all prime numbers less than or equal to . Print your result on a single line, and use the ampersand (&) character as your separator (instead of a space).
+
+*/
+
+DECLARE @DATA  NVARCHAR(2000)
+DECLARE @COUNTER INT
+DECLARE @PRIME_TABLE TABLE(Z INT)
+SET @DATA = ''
+SET @COUNTER = 2
+WHILE @COUNTER <= 1000
+    BEGIN 
+        IF NOT EXISTS(SELECT DISTINCT 1 FROM @PRIME_TABLE WHERE @COUNTER % Z = 0)
+            BEGIN 
+                INSERT INTO @PRIME_TABLE SELECT @COUNTER
+                SET @DATA = @DATA + CAST(@COUNTER AS VARCHAR) + '&' 
+            END
+        SET @COUNTER = @COUNTER + 1    
+    END
+SELECT SUBSTRING(@DATA,0,LEN(@DATA))  

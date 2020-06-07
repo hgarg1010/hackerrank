@@ -1,0 +1,29 @@
+/*
+Enter your query here.
+Please append a semicolon ";" at the end of the query and enter your query in a single line to avoid error.
+*/
+
+/*declare @main_table table(id int , s date, e date, rn int);
+Insert @main_table*/
+
+select task_id id, start_date s, end_date e, row_number() over(order by end_date) as rn into #main_table
+from projects order by end_date;
+--select * from #main_table
+
+with rec_cte(id,s, e, rn, z) as
+(
+    select id,s, e, rn , 1 from #main_table where rn =1
+    union all
+    select #main_table.id, #main_table.s, #main_table.e, #main_table.rn,
+    (case when datediff(day,rec_cte.e,#main_table.e)=1 then z 
+    else z+1 end)
+    from #main_table join rec_cte 
+    on #main_table.rn = rec_cte.rn +1
+    and rec_cte.rn < 25
+)
+--select * from rec_cte;
+
+select min(s) ,max(e) from rec_cte group by z 
+order by datediff(day, min(s) ,max(e)) , min(s);
+
+
